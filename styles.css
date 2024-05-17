@@ -1,3 +1,7 @@
+html, body {
+    touch-action: manipulation;
+}
+
 body {
     background-color: #1c1c1c; /* Darker background */
     color: #ffffff;

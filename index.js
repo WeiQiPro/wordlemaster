@@ -137,10 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentGuess.length === wordLength) {
           if (acceptableWords.has(currentGuess.toUpperCase())) {
             checkGuess();
-            total = round * RD + firstWordPoints;
             if (round === 0) {
               firstWordPoints = calculateScore(currentGuess);
             }
+            total = round * RD + firstWordPoints;
             currentGuess = "";
             round++;
           } else {

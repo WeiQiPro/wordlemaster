@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleInput(letter) {
-    if (letter === "<<") {
+    if (letter === "<<<") {
       currentGuess = currentGuess.slice(0, -1);
     } else if (letter === "Enter") {
       if (currentGuess.length === wordLength) {

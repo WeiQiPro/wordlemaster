@@ -17,6 +17,10 @@ body {
 
 .scoreboard {
     margin-bottom: 20px;
+    padding: 10px;
+    background-color: #444;
+    border-radius: 8px;
+    text-align: center;
 }
 
 .grid-container {
@@ -41,7 +45,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 32px;
+    font-size: 28px;
 }
 
 .keyboard {

@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const grid = document.querySelector(".grid");
-  const firstWordPointsSpan = document.getElementById("first");
   const totalScorePointsSpan = document.getElementById("total");
   const buttons = document.querySelectorAll(".keyboard button");
 
@@ -153,9 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
       currentGuess += letter;
     }
     updateGrid();
-    firstWordPointsSpan.textContent = firstWordPoints
-      .toString()
-      .padStart(1, "0");
     totalScorePointsSpan.textContent = total.toString().padStart(1, "0");
   }
 

@@ -169,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cells = grid.querySelectorAll(".cell");
     const guessLetters = currentGuess.split("");
     const wordLetters = wordOfTheDay.split("");
+    const buttonColors = {}; // Object to store button colors
 
     // First pass: check for correct positions (green)
     guessLetters.forEach((letter, index) => {
@@ -178,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (letter === wordLetters[index]) {
         cell.style.backgroundColor = "green";
         wordLetters[index] = null; // Remove the letter from word to avoid double counting
+        buttonColors[letter.toUpperCase()] = "green";
       }
     });
 
@@ -192,13 +194,31 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         cell.style.backgroundColor = "#dac316";
         wordLetters[wordLetters.indexOf(letter)] = null; // Remove the letter from word to avoid double counting
+        if (!buttonColors[letter.toUpperCase()]) {
+          buttonColors[letter.toUpperCase()] = "#dac316";
+        }
       } else {
         if (
           cell.style.backgroundColor !== "green" &&
           cell.style.backgroundColor !== "#dac316"
         ) {
           cell.style.backgroundColor = "#636363";
+          if (!buttonColors[letter.toUpperCase()]) {
+            buttonColors[letter.toUpperCase()] = "#636363";
+          }
         }
+      }
+    });
+
+    // Update button colors based on guesses
+    updateButtonColors(buttonColors);
+  }
+
+  function updateButtonColors(buttonColors) {
+    buttons.forEach((button) => {
+      const letter = button.textContent.toUpperCase();
+      if (buttonColors[letter]) {
+        button.style.backgroundColor = buttonColors[letter];
       }
     });
   }

@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (round === 0) {
               firstWordPoints = calculateScore(currentGuess);
             }
-            total = round * RD + firstWordPoints;
+            total = (round * RD) + firstWordPoints;
             currentGuess = "";
             round++;
           } else {

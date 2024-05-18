@@ -32,10 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
     Z: 1,
   };
 
-  const RD = 5; // round index multiplier
+  const RD = 10; // round index multiplier
 
   const wordLength = 5;
   const maxGuesses = 6;
+  const currentYear = new Date().getFullYear();
+  const seed = currentYear;
+
   let wordOfTheDay = "";
   let currentGuess = "";
   let round = 0;
@@ -58,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       wordOfTheDay = getWordOfTheDay();
       wordOfTheDay = wordOfTheDay.toLocaleUpperCase(); // Assign the result back to wordOfTheDay
-      console.log(wordOfTheDay);
     });
 
   fetch(
@@ -74,36 +76,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getWordOfTheDay() {
     const today = new Date();
-    const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-    let index = pseudoRandomIndex(daysSinceEpoch, wordleLA.length);
-
-    const usedWords = calculateUsedWords();
-    console.log(usedWords);
-    while (usedWords.includes(wordleLA[index])) {
-      index = (index + 1) % wordleLA.length;
-    }
-
-    return wordleLA[index];
+    const dayOfYear = Math.floor(
+      (today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24
+    );
+    const uniqueIndices = generateUniqueIndices(
+      currentYear,
+      wordleLA.length,
+      365
+    );
+    return wordleLA[uniqueIndices[dayOfYear]];
   }
 
-  function calculateUsedWords() {
-    const today = new Date();
-    const usedWords = [];
-    for (let i = 1; i <= 30; i++) {
-      const pastDay = new Date(today);
-      pastDay.setDate(today.getDate() - i);
-      const daysSinceEpoch = Math.floor(
-        pastDay.getTime() / (1000 * 60 * 60 * 24)
+  function generateUniqueIndices(seed, length, count) {
+    const indices = new Set();
+    let i = 0;
+    while (indices.size < count) {
+      const index = Math.floor(
+        (Math.abs(Math.sin(seed + i) + Math.cos(seed + i)) * 100000) % length
       );
-      const index = pseudoRandomIndex(daysSinceEpoch, wordleLA.length);
-      usedWords.push(wordleLA[index]);
+      indices.add(index);
+      i++;
     }
-    return usedWords;
-  }
-
-  function pseudoRandomIndex(seed, range) {
-    const x = Math.sin(seed) * 10000;
-    return Math.floor((x - Math.floor(x)) * range);
+    return Array.from(indices);
   }
 
   function createGrid() {
@@ -134,18 +128,28 @@ document.addEventListener("DOMContentLoaded", () => {
       currentGuess = currentGuess.slice(0, -1);
     } else if (letter === "Enter") {
       if (currentGuess.length === wordLength) {
-        if (currentGuess.length === wordLength) {
-          if (acceptableWords.has(currentGuess.toUpperCase())) {
-            checkGuess();
-            if (round === 0) {
-              firstWordPoints = calculateScore(currentGuess);
-            }
-            total = (round * RD) + firstWordPoints;
-            currentGuess = "";
-            round++;
-          } else {
-            alert("Not a valid word");
+        if (acceptableWords.has(currentGuess.toUpperCase())) {
+          checkGuess();
+          if (round === 0) {
+            firstWordPoints = calculateScore(currentGuess);
           }
+          if (currentGuess.toUpperCase() === wordOfTheDay) {
+            total = firstWordPoints + round * RD;
+            alert(`Congratulations! You guessed the word: ${wordOfTheDay}. Your total score is: ${total}`);
+            return; // End the game
+          } else {
+            if (round < 5) {
+              total = firstWordPoints + round * RD;
+              round++;
+            } else {
+              total = firstWordPoints + 60;
+              alert(`Game Over! The correct word was: ${wordOfTheDay}. Your total score is: ${total}`);
+              return; // End the game
+            }
+          }
+          currentGuess = "";
+        } else {
+          alert("Not a valid word");
         }
       }
     } else if (currentGuess.length < wordLength) {
@@ -154,6 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateGrid();
     totalScorePointsSpan.textContent = total.toString().padStart(1, "0");
   }
+  
 
   function calculateScore(word) {
     return word.split("").reduce((score, letter) => {
